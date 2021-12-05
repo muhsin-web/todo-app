@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrapper">
+        <h2 class="title">Todo List App</h2>
+        <div class="inputfield">
+            <input type="text" class="taskvalue" placeholder="Enter a task...">
+            <button type="submit" class="btn add-btn">ADD</button>
+        </div>
+        <div class="content">
+            <ul class="tasks">
+            </ul>
+        </div>
+    </div>
+    <script src="jquery.js"></script>
+    <script>
+        $(document).ready(function(){
+            function loadTask(){
+            $.ajax({
+                url: "list.php",
+                type: "POST",
+                success: function(data){
+                    $('.tasks').html(data)
+                }
+            });
+       }
+       loadTask();
+
+        $(".add-btn").on('click', function(e){
+            e.preventDefault();
+           var task = $(".taskvalue").val();
+           console.log(task)
+            $.ajax({
+                url: "add-task.php",
+                type: "POST",
+                data: {task: task},
+                success: function(data){
+                    loadTask();
+                    $(".taskvalue").val(" ");
+                    if(data == 0){
+                        alert("something went wrong, try Again.")
+                    }
+                }
+            });
+        });
+
+        $(document).on("click", ".removeBtn", function(e){
+            e.preventDefault();
+            var id = $(this).data('id');
+            $.ajax({
+                url: "remove-task.php",
+                type: "POST",
+                data: {id: id},
+                success: function(data){
+                    loadTask();
+                    if(data == 0){
+                        alert("something went wrong, try Again.")
+                    }
+                }
+            })
+        })
+            
+        })
+    </script>
+</body>
+</html>
